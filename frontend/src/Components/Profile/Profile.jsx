@@ -18,8 +18,8 @@ export default function Profile() {
     try {
       const response = await axios.get(`${baseURL}/profile/${user.id}`);
       if (response) {
-        const { name, email, phoneNumber, profilePicture } = response.data;
-        setUserData({ name, email, phoneNumber, profilePicture });
+        const { name, email, phoneNumber, profilePicture, preferredGenres } = response.data;
+        setUserData({ name, email, phoneNumber, profilePicture, preferredGenres });
       }
       else {
         console.error('No data received from the server');
@@ -49,6 +49,7 @@ export default function Profile() {
       document.removeEventListener('click', handleOutsideClick);
     };
   }, [isPhotoExpanded]);
+  console.log(userData);
 
   return (
     <>
@@ -88,8 +89,9 @@ export default function Profile() {
             <div className="mt-10">
               <div className="bg-gray-200 p-4 rounded-md">
                 <h2 className="text-lg font-semibold text-gray-700">Name: {userData.name}</h2>
-                <p className="mt-2 text-sm text-gray-600">Email: {userData.email}</p>
-                <p className="mt-2 text-sm text-gray-600">Phone: {userData.phoneNumber}</p>
+                <p className="mt-2 text-sm text-gray-600"><b>preferredGenres:</b> {userData.preferredGenres?userData.preferredGenres.join(', '):"N/A"}</p>
+                <p className="mt-2 text-sm text-gray-600"><b>Email:</b> {userData.email}</p>
+                <p className="mt-2 text-sm text-gray-600"><b>Phone:</b> {userData.phoneNumber}</p>
               </div>
             </div>
             <div className="mt-10 text-center">

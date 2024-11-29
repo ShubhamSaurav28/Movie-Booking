@@ -47,7 +47,10 @@ router.get('/movie/banner/:movieName/:date', async (req, res) => {
     try {
         let { movieName, date } = req.params;
         // const response = await Show.find({ movieName, date }).populate('cinema');
-        const response = await Show.find({ movieName, date }).populate("cinema");
+        console.log(date);
+        console.log(movieName);
+        const response = await Show.find({ movieName: movieName, date: date }).populate("cinema");
+        console.log(response);
         if (!response) {
             return res.status(404).json({ message: "Shows not found" });
         }

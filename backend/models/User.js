@@ -39,6 +39,9 @@ let userSchema = new mongoose.Schema({
     password: {
         type: String,
     },
+    preferredGenres: [{
+        type: String
+    }],
     phoneNumber: {
         type: Number,
     },

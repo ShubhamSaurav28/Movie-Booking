@@ -76,7 +76,7 @@ function BookingPreview() {
         console.log(order);
 
         var options = {
-            "key": "rzp_test_5gyxFQ3rVGnviW",
+            "key": "rzp_test_0km51UxKfwaq36",
             amount,
             currency,
             "name": "MOVIEMANIA",
@@ -104,8 +104,8 @@ function BookingPreview() {
                 }
             },
             // "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
-            //     "name": "Utkarsh Paliwal", //your customer's name
-            //     "email": "utkarsh.paliwal@example.com",
+            //     "name": "Shubham Saurav", //your customer's name
+            //     "email": "shubham.saurav@example.com",
             //     "contact": "9000000000"  //Provide the customer's phone number for better conversion rates 
             // },
             "notes": {

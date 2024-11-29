@@ -110,7 +110,7 @@ export default function CarouselCustomArrows() {
       <br />
       <h1 className="p-2 text-4xl ml-[8.5rem] font-bold">Recommended Movies</h1>
       <br />
-      <div className="w-[80vw] mx-auto">
+      <div className="w-[90vw] mx-auto">
         <CardSlider items={data} />
       </div>
     </>
