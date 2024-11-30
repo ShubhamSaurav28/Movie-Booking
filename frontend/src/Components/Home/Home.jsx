@@ -10,20 +10,8 @@ export default function Home() {
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [recommendations, setRecommendations] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
   let user = tokenCheck();
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
-
-  // const fetchData = async () => {
-  //   try {
-  //     let response = await axios.get(`${baseURL}/movies`);
-  //     setData(response.data);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -40,7 +28,6 @@ export default function Home() {
       "https://images7.alphacoders.com/104/1045911.jpg",
       "https://wallpapercave.com/wp/wp8807385.jpg"
     ];
-
     setImages(imageUrls);
   }, []);
 
@@ -50,17 +37,17 @@ export default function Home() {
         const response = await axios.get(`${baseURL}/movie/recommend/${user.id}`);
         setRecommendations(response.data);
       } catch (err) {
-        console.error('Error fetching recommendations', err);
+        console.error("Error fetching recommendations", err);
+      } finally {
+        setLoading(false); // Set loading to false after fetching
       }
     };
-
     fetchRecommendations();
   }, [user.id]);
 
   return (
     <>
       <Carousel
-        className=""
         autoplay
         autoplayInterval={4000}
         infiniteLoop
@@ -116,7 +103,7 @@ export default function Home() {
         {images.map((imageUrl, index) => (
           <img
             key={index}
-            src={images[(currentIndex + index) % images.length]} // Dynamically render images based on currentIndex
+            src={images[(currentIndex + index) % images.length]}
             alt={`image ${index + 1}`}
             className="h-80 w-full object-cover"
           />
@@ -127,7 +114,13 @@ export default function Home() {
       <h1 className="p-2 text-4xl ml-[8.5rem] font-bold">Recommended Movies</h1>
       <br />
       <div className="w-[90vw] mx-auto">
-        <CardSlider items={recommendations} />
+        {loading ? (
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
+          </div>
+        ) : (
+          <CardSlider items={recommendations} />
+        )}
       </div>
     </>
   );

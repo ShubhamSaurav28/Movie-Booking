@@ -14,31 +14,32 @@ data = json.loads(input_data)
 user_data = data['userData']  # User data containing 'preferredGenres' and 'bookedTickets'
 movie_data = data['movieData']  # Movie data containing 'genre', 'cast', 'ratings', 'language'
 
-# Prepare user booking history (creating a list of movie names they've already watched)
+# Prepare user booking history (list of movie names the user has already watched)
 watched_movies = [ticket["movieName"] for ticket in user_data["bookedTickets"]]
 
 # Generate movie features for content-based filtering
 movie_features = []
-all_genres = set([genre for movie in movie_data for genre in movie['genre'].split(', ')])  # Collect all genres
+all_genres = set([genre for movie in movie_data for genre in movie['genre'].split(', ')])
 
 # Create a dictionary for encoding genres into one-hot vectors
 genre_dict = {genre: idx for idx, genre in enumerate(all_genres)}
 
 def genre_vector(movie_genres):
+    """Convert a movie's genres into a one-hot vector."""
     vector = [0] * len(all_genres)
     for genre in movie_genres.split(', '):
         if genre in genre_dict:
             vector[genre_dict[genre]] = 1
     return vector
 
-# Process movie data and create features
+# Process movie data to create feature vectors
 for movie in movie_data:
     features = {
-        'name': movie['name'],  # Movie name
-        'genre': movie['genre'],  # Genre as string
+        'name': movie['name'],
+        'genre': movie['genre'],
         'ratings': movie['ratings'],
         'language': movie['language'],
-        'genre_vector': genre_vector(movie['genre'])  # Convert genres to one-hot vector
+        'genre_vector': genre_vector(movie['genre']),
     }
     movie_features.append(features)
 
@@ -46,38 +47,47 @@ for movie in movie_data:
 df_movies = pd.DataFrame(movie_features)
 
 # Combine genre and rating into a single feature vector
-df_movies['genre_rating_vector'] = df_movies.apply(lambda row: row['genre_vector'] + [row['ratings']], axis=1)
+df_movies['genre_rating_vector'] = df_movies.apply(
+    lambda row: row['genre_vector'] + [row['ratings']], axis=1
+)
 
 # Movie vectors (genre + rating)
 movie_vectors = np.array(df_movies['genre_rating_vector'].tolist())
 
-# Check for NaN values and handle them if necessary
+# Replace NaN values if any
 if pd.isna(movie_vectors).any():
-    # Replace NaNs with zeros
     movie_vectors = np.nan_to_num(movie_vectors, nan=0)
 
 # Calculate cosine similarity between movies
 similarity_matrix = cosine_similarity(movie_vectors)
 
-# Get the list of unseen movies (movies that the user hasn't watched yet)
-unseen_movies = [movie for movie in movie_data if movie['name'] not in watched_movies]
+# User's preferred genres
+preferred_genres = user_data.get('preferredGenres', [])
 
-# Rank unseen movies by similarity to the user's watched movies
+def calculate_genre_match_score(movie_genres, preferred_genres):
+    """Calculate how many of the movie's genres match the user's preferred genres."""
+    movie_genre_list = movie_genres.split(', ')
+    return sum(1 for genre in movie_genre_list if genre in preferred_genres)
+
+# Rank unseen movies by similarity and genre match score
 movie_scores = []
-for movie in unseen_movies:
-    similarity_score = 0
-    for watched_movie in watched_movies:
-        # Get the index of the watched movie in the dataframe
-        watched_index = df_movies[df_movies['name'] == watched_movie].index[0]
-        # Get the index of the unseen movie in the dataframe
-        unseen_index = df_movies[df_movies['name'] == movie['name']].index[0]
-        # Add the similarity score for this movie pair
-        similarity_score += similarity_matrix[unseen_index][watched_index]
+for movie in movie_data:
+    if movie['name'] not in watched_movies:
+        similarity_score = 0
+        for watched_movie in watched_movies:
+            watched_index = df_movies[df_movies['name'] == watched_movie].index[0]
+            unseen_index = df_movies[df_movies['name'] == movie['name']].index[0]
+            similarity_score += similarity_matrix[unseen_index][watched_index]
 
-    # Add the movie and its calculated score
-    movie_scores.append((movie['name'], similarity_score))
+        # Calculate genre match score
+        genre_match_score = calculate_genre_match_score(movie['genre'], preferred_genres)
 
-# Sort the movies based on the similarity score (higher is better)
+        # Final score: combine similarity and genre match score
+        final_score = similarity_score + (2 * genre_match_score)  # Adjust weight as needed
+
+        movie_scores.append((movie['name'], final_score))
+
+# Sort movies by the final score in descending order
 movie_scores.sort(key=lambda x: x[1], reverse=True)
 
 # Return the top 5 recommendations

@@ -32,9 +32,9 @@ function Movies() {
     return (
         <div className="flex flex-row flex-wrap gap-8 justify-center mt-10 my-6 sm:mx-10 md:mx-20">
             {data.map((item, index) => (
-                <Link to={`/movies/${item.name}/${item._id}`} key={index}>
                     <div className="relative">
                         <MovieCard
+                            id={item._id}
                             image={item.poster}
                             title={item.name}
                             language={item.language}
@@ -46,7 +46,6 @@ function Movies() {
                             <div>{item.ratings}/10 Ratings</div>
                         </div>
                     </div>
-                </Link>
             ))}
         </div>
     )
