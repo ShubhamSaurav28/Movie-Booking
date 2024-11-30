@@ -25,6 +25,7 @@ function MovieCoverPage() {
     // };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchMovieData();
     }, [movieName, id])
 
