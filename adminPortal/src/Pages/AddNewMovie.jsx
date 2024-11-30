@@ -5,7 +5,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { CinemaState } from "../Context/CinemaProvider";
 
-
 function AddNewMovie() {
   const [name, setName] = useState("");
   const [ratings, setRatings] = useState("");
@@ -21,7 +20,6 @@ function AddNewMovie() {
   const [poster, setPoster] = useState("");
   const { user } = CinemaState();
   const navigate = useNavigate();
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,34 +58,24 @@ function AddNewMovie() {
 
   const handleLanguageChange = (e) => {
     const { value, checked } = e.target;
-    let updatedLanguages;
-    if (checked) {
-      updatedLanguages = [...language, value];
-    } else {
-      updatedLanguages = language.filter((lang) => lang !== value);
-    }
-    setLanguage(updatedLanguages);
+    setLanguage((prevLanguages) => 
+      checked 
+        ? [...prevLanguages, value] 
+        : prevLanguages.filter((lang) => lang !== value)
+    );
   };
 
   const handleCastChange = (index, field, value) => {
     const updatedCast = [...cast];
     updatedCast[index][field] = value;
-    // console.log(value);
-    // console.log(field);
-    // console.log(index);
-    // console.log(updatedCast);
     setCast(updatedCast);
   };
-
-
 
   const handleCrewChange = (index, field, value) => {
     const updatedCrew = [...crew];
     updatedCrew[index][field] = value;
     setCrew(updatedCrew);
   };
-
-
 
   const handleAddCast = () => {
     setCast([...cast, { name: "", role: "", img: "" }]);
@@ -116,18 +104,14 @@ function AddNewMovie() {
         poster
       });
       if (response) {
-        console.log("Hello", response);
-        navigate('/moviepage');
-        console.log("Hello", response);
         navigate('/moviepage');
       }
-    }
-    catch (error) {
+    } catch (error) {
       toast.error('Error in adding movie');
       console.error('Error during adding movie:', error);
     }
-
   };
+
   return (
     <div className="text-red-500 flex justify-center" style={{ backgroundColor: 'rgb(245, 245, 245)' }}>
       <form className="w-3/4 p-8 bg-gray-100 rounded-lg shadow-lg" onSubmit={handleSubmit}>
@@ -146,6 +130,7 @@ function AddNewMovie() {
             onChange={handleChange}
           />
         </div>
+
         <div className="mb-4">
           <label htmlFor="ratings" className="block mb-1">
             Ratings:
@@ -160,32 +145,25 @@ function AddNewMovie() {
             onChange={handleChange}
           />
         </div>
+
         <div className="mb-4">
           <label className="block mb-1">Language:</label>
           <div>
-            <label>
-              <input
-                type="checkbox"
-                name="language"
-                value="English"
-                checked={language.includes("English")}
-                onChange={handleLanguageChange}
-              />
-              English
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="language"
-                value="Spanish"
-                checked={language.includes("Spanish")}
-                onChange={handleLanguageChange}
-              />
-              Spanish
-            </label>
-            {/* Add more checkboxes for other languages */}
+            {['English', 'Spanish', 'Hindi', 'French', 'German'].map((lang, index) => (
+              <label key={index} className="mr-4">
+                <input
+                  type="checkbox"
+                  name="language"
+                  value={lang}
+                  checked={language.includes(lang)}
+                  onChange={handleLanguageChange}
+                />
+                {lang}
+              </label>
+            ))}
           </div>
         </div>
+
         <div className="mb-4">
           <label htmlFor="duration" className="block mb-1">
             Duration:
@@ -200,6 +178,7 @@ function AddNewMovie() {
             onChange={handleChange}
           />
         </div>
+
         <div className="mb-4">
           <label htmlFor="genre" className="block mb-1">
             Genre:
@@ -214,6 +193,7 @@ function AddNewMovie() {
             onChange={handleChange}
           />
         </div>
+
         <div className="mb-4">
           <label htmlFor="certificate" className="block mb-1">
             Certificate:
@@ -228,6 +208,7 @@ function AddNewMovie() {
             onChange={handleChange}
           />
         </div>
+
         <div className="mb-4">
           <label htmlFor="releaseDate" className="block mb-1">
             Release Date:
@@ -242,6 +223,7 @@ function AddNewMovie() {
             onChange={handleChange}
           />
         </div>
+
         <div className="mb-4">
           <label htmlFor="desc" className="block mb-1">
             Description:
@@ -255,6 +237,7 @@ function AddNewMovie() {
             onChange={handleChange}
           />
         </div>
+
         <div className="mb-4">
           <label className="block mb-1">Cast:</label>
           {cast.map((actor, index) => (
@@ -281,6 +264,7 @@ function AddNewMovie() {
           ))}
           <button type="button" onClick={handleAddCast}>Add Cast Member</button>
         </div>
+
         <div className="mb-4">
           <label className="block mb-1">Crew:</label>
           {crew.map((crewMember, index) => (
@@ -307,9 +291,10 @@ function AddNewMovie() {
           ))}
           <button type="button" onClick={handleAddCrew}>Add Crew Member</button>
         </div>
+
         <div className="mb-4">
           <label htmlFor="bgimage" className="block mb-1">
-            Background Image URL:
+            Background Image:
           </label>
           <input
             type="text"
@@ -321,9 +306,10 @@ function AddNewMovie() {
             onChange={handleChange}
           />
         </div>
+
         <div className="mb-4">
           <label htmlFor="poster" className="block mb-1">
-            Poster Image URL:
+            Poster Image:
           </label>
           <input
             type="text"
@@ -335,11 +321,12 @@ function AddNewMovie() {
             onChange={handleChange}
           />
         </div>
-        {/* Add reviews and cinemas similarly */}
-        <button type="submit" onClick={handleSubmit} className="h-12 w-42 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md mb-4">
-          Add New Movie
+
+        <button type="submit" className="bg-blue-500 text-white p-2 w-full">
+          Submit
         </button>
       </form>
+      <ToastContainer />
     </div>
   );
 }

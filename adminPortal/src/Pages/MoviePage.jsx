@@ -30,14 +30,14 @@ function MoviePage() {
   return (
     <div>
       <h1 className="text-3xl text-red-500 text-center m-2 font-bold">Movies</h1>
-      <div className="mt-10 mx-8">
-        <div className="card grid grid-cols-3 gap-10">
+      <div className="mt-10 mx-8 mb-10">
+        <div className="card grid grid-cols-3 gap-10 ">
           {movies.map((item) => (
-            <div className="text-center border rounded-md w-[20rem]" key={item.id}>
+            <div className="text-center border border-black rounded-md w-[20rem] bg-slate-100" key={item.id}>
               <img src={item.poster} className="w-full" alt="" />
               <h5 className="text-lg font-semibold">{item.name}</h5>
               <h4 className="text-lg text-gray-500">{item.releaseDate}</h4>
-              <h4 className="text-lg text-gray-500">{item.
+              <h4 className="text-lg text-gray-500 line-clamp-3">{item.
                 desc}</h4>
             </div>
           ))}

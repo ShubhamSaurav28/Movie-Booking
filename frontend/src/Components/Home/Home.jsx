@@ -3,24 +3,27 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import baseURL from "../../DB";
 import CardSlider from "../CardSlider/CardSlider";
+import { tokenCheck } from "../../../helperToken";
 
-export default function CarouselCustomArrows() {
+export default function Home() {
   const [data, setData] = useState([]);
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [recommendations, setRecommendations] = useState([]);
+  let user = tokenCheck();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
-  const fetchData = async () => {
-    try {
-      let response = await axios.get(`${baseURL}/movies`);
-      setData(response.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     let response = await axios.get(`${baseURL}/movies`);
+  //     setData(response.data);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -40,6 +43,19 @@ export default function CarouselCustomArrows() {
 
     setImages(imageUrls);
   }, []);
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/movie/recommend/${user.id}`);
+        setRecommendations(response.data);
+      } catch (err) {
+        console.error('Error fetching recommendations', err);
+      }
+    };
+
+    fetchRecommendations();
+  }, [user.id]);
 
   return (
     <>
@@ -111,7 +127,7 @@ export default function CarouselCustomArrows() {
       <h1 className="p-2 text-4xl ml-[8.5rem] font-bold">Recommended Movies</h1>
       <br />
       <div className="w-[90vw] mx-auto">
-        <CardSlider items={data} />
+        <CardSlider items={recommendations} />
       </div>
     </>
   );

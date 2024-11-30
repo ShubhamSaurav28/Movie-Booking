@@ -14,6 +14,7 @@ const ownerroutes = require('./AdminRoutes/ownerroutes');
 const ownerShowRoutes = require('./AdminRoutes/ownerShowRoutes.js')
 const ownerMovieRoutes = require('./AdminRoutes/ownerMovieRoutes.js')
 const paymentroutes = require('./routes/paymentroutes.js')
+const mlroutes = require('./routes/mlroutes.js');
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use(cors());
 app.use(userroutes);
 app.use(cinemaroutes);
 app.use(movieroutes);
+app.use(mlroutes);
 app.use(showroutes);
 app.use(searchroutes);
 app.use(ownerroutes);

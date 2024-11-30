@@ -3,7 +3,6 @@ const router = express.Router();
 const Movie = require('../models/Movie.js');
 const Show = require('../models/Show.js');
 
-
 router.get('/Home/movies', async (req, res) => {
     try {
         const response = await Movie.find();
@@ -47,10 +46,7 @@ router.get('/movie/banner/:movieName/:date', async (req, res) => {
     try {
         let { movieName, date } = req.params;
         // const response = await Show.find({ movieName, date }).populate('cinema');
-        console.log(date);
-        console.log(movieName);
         const response = await Show.find({ movieName: movieName, date: date }).populate("cinema");
-        console.log(response);
         if (!response) {
             return res.status(404).json({ message: "Shows not found" });
         }
@@ -59,5 +55,7 @@ router.get('/movie/banner/:movieName/:date', async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 })
+
+
 
 module.exports = router;
