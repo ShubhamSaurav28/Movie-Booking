@@ -83,7 +83,7 @@ for movie in movie_data:
         genre_match_score = calculate_genre_match_score(movie['genre'], preferred_genres)
 
         # Final score: combine similarity and genre match score
-        final_score = similarity_score + (2 * genre_match_score)  # Adjust weight as needed
+        final_score = similarity_score + (genre_match_score)  # Adjust weight as needed
 
         movie_scores.append((movie['name'], final_score))
 

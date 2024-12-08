@@ -6,22 +6,14 @@ import CardSlider from "../CardSlider/CardSlider";
 import { tokenCheck } from "../../../helperToken";
 
 export default function Home() {
-  const [data, setData] = useState([]);
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [recommendations, setRecommendations] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
-  let user = tokenCheck();
+  const [loading, setLoading] = useState(true);
+  const user = tokenCheck();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 3000); // Change image every 3 seconds
-
-    return () => clearTimeout(timer);
-  }, [currentIndex, images]);
-
-  useEffect(() => {
+    // Set up carousel images
     const imageUrls = [
       "https://giffiles.alphacoders.com/222/222045.gif",
       "https://images8.alphacoders.com/100/1003220.png",
@@ -34,16 +26,28 @@ export default function Home() {
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
+        setLoading(true); // Set loading state to true before making the request
         const response = await axios.get(`${baseURL}/movie/recommend/${user.id}`);
         setRecommendations(response.data);
+        localStorage.setItem('recommendations', JSON.stringify(response.data)); // Store recommendations in localStorage
       } catch (err) {
         console.error("Error fetching recommendations", err);
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false); // Set loading state to false after fetching is done
       }
     };
+
+    // Fetch recommendations on every page refresh
     fetchRecommendations();
-  }, [user.id]);
+  }, [user.id]); // Dependency array ensures this runs on page load
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3000); // Change image every 3 seconds
+
+    return () => clearTimeout(timer);
+  }, [currentIndex, images]);
 
   return (
     <>
